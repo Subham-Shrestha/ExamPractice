@@ -1,0 +1,126 @@
+Microsoft (R) Macro Assembler Version 5.00                  8/30/26 17:57:52
+                                                             Page     1-1
+
+
+				.model small 
+ 0100				.stack 100h 
+				 
+ 0000				.data 
+ 0000  73 75 62 68 61 6D 20	    mystr db 'subham shrestha'          ; The s
+				tring to reverse (6 characters) 
+       73 68 72 65 73 74 68	
+       61			
+ 000F  000F			    len   dw 15                ; Length of the 
+				string 
+				 
+ 0000				.code 
+ 0000				main proc 
+				    ; Initialize Data Segment 
+ 0000  B8 ---- R		    mov ax, @data 
+ 0003  8E D8			    mov ds, ax 
+ 0005  8E C0			    mov es, ax 
+				 
+				    ; --- Part 1: Reverse the string using two 
+				pointers --- 
+ 0007  BE 0000 R		    mov si, offset mystr      ; SI points to th
+				e start of the string 
+ 000A  BF 0000 R		    mov di, offset mystr       
+ 000D  03 3E 000F R		    add di, [len]              
+ 0011  4F			    dec di                    ; DI points to th
+				e last character of the string 
+				 
+ 0012				rev_loop: 
+ 0012  3B F7			    cmp si, di                ; Compare pointer
+				 positions 
+ 0014  7D 0C			    jge print_prep            ; If SI >= DI, we
+				 have reached the middle/finished 
+				 
+				    ; Swap characters 
+ 0016  8A 04			    mov al, [si]              ; Load character 
+				from start into AL 
+ 0018  8A 1D			    mov bl, [di]              ; Load character 
+				from end into BL 
+ 001A  88 1C			    mov [si], bl              ; Put end charact
+				er at start 
+ 001C  88 05			    mov [di], al              ; Put start chara
+				cter at end 
+				 
+ 001E  46			    inc si                    ; Move start poin
+				ter forward 
+ 001F  4F			    dec di                    ; Move end pointe
+				r backward 
+ 0020  EB F0			    jmp rev_loop 
+				 
+ 0022				print_prep: 
+				    ; --- Part 2: Print the reversed string to 
+				screen --- 
+ 0022  BE 0000 R		    mov si, offset mystr      ; Reset SI to the
+				 start of the string 
+Microsoft (R) Macro Assembler Version 5.00                  8/30/26 17:57:52
+                                                             Page     1-2
+
+
+ 0025  8B 0E 000F R		    mov cx, [len]             ; Set counter to 
+				string length 
+				 
+ 0029				print_loop: 
+ 0029  B4 02			    mov ah, 02h               ; DOS function to
+				 print a single character 
+ 002B  8A 14			    mov dl, [si]              ; Load character 
+				from memory into DL 
+ 002D  CD 21			    int 21h                   ; Call DOS interr
+				upt to print it 
+ 002F  46			    inc si                    ; Move to next ch
+				aracter 
+ 0030  49			    dec cx                    ; Decrease counte
+				r 
+ 0031  75 F6			    jnz print_loop            ; Repeat until al
+				l characters are printed 
+				 
+				    ; --- Terminate program and return to DOS -
+				-- 
+ 0033  B4 4C			    mov ah, 4Ch 
+ 0035  CD 21			    int 21h 
+ 0037				main endp 
+ 0037				end main 
+Microsoft (R) Macro Assembler Version 5.00                  8/30/26 17:57:52
+                                                             Symbols-1
+
+
+Segments and Groups:
+
+                N a m e         	Length	 Align	Combine Class
+
+DGROUP . . . . . . . . . . . . .  	GROUP
+  _DATA  . . . . . . . . . . . .  	0011	WORD	PUBLIC	'DATA'
+  STACK  . . . . . . . . . . . .  	0100	PARA	STACK	'STACK'
+_TEXT  . . . . . . . . . . . . .  	0037	WORD	PUBLIC	'CODE'
+
+Symbols:            
+
+                N a m e         	Type	 Value	 Attr
+
+LEN  . . . . . . . . . . . . . .  	L WORD	000F	_DATA
+
+MAIN . . . . . . . . . . . . . .  	N PROC	0000	_TEXT	Length = 0037
+MYSTR  . . . . . . . . . . . . .  	L BYTE	0000	_DATA
+
+PRINT_LOOP . . . . . . . . . . .  	L NEAR	0029	_TEXT
+PRINT_PREP . . . . . . . . . . .  	L NEAR	0022	_TEXT
+
+REV_LOOP . . . . . . . . . . . .  	L NEAR	0012	_TEXT
+
+@CODE  . . . . . . . . . . . . .  	TEXT  _TEXT		
+@CODESIZE  . . . . . . . . . . .  	TEXT  0		
+@DATASIZE  . . . . . . . . . . .  	TEXT  0		
+@FILENAME  . . . . . . . . . . .  	TEXT  reverse		
+
+
+     52 Source  Lines
+     52 Total   Lines
+     20 Symbols
+
+  51082 + 465462 Bytes symbol space free
+
+      0 Warning Errors
+      0 Severe  Errors
